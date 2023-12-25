@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <title>ETF Portfolio Builder</title>
+    <script>
+        document.onload = function() {
+            console.log("Hello World");
+            
+        }
+    </script>
+    <style>
+        
+        div{
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        table{
+            border-collapse: collapse;
+            width: 80%;
+            text-align: left;
+        }
+        table tr{
+            border-bottom: 1px solid #000;
+        }
+        table tr:nth-child(odd){
+            background-color: #ccbdbd;
+        }
+    </style>
+</head>
+<body>
+    <button id="generate-pdf">Generate PDF</button>
+    
+    <script>
+        document.getElementById('generate-pdf').addEventListener('click', function() {
+            generatePDF();
+        });
+
+        function generatePDF() {
+            const element = document.getElementById("content"); // Entire body content
+            const opt = {
+                margin: 1,
+                filename: 'converted.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Start the PDF generation
+            html2pdf().from(element).set(opt).save();
+        }
+    </script>
+    <div id="content">
+    
+    <h1>Your Recommended ETF Portfolio</h1>
+    
+    <table>
+        <tr>
+            <th>Time Horizon (Years)</th>
+            <th>Starting Value</th>
+            <th>Risk Tolerance</th>
+        </tr>
+        <tr>
+            <td>{{years}}</td>
+            <td>{{amount}}</td>
+            <td>{{risk_level}}</td>
+        </tr>
+    </table>
+    <br/>
+    <table>
+        <tr>
+            <th>Symbol</th>
+            <th>Name</th>
+            <th>Asset Class</th>
+            <th>Expense Ratio</th>
+            <th>Price</th>
+            <th># of Shares</th>
+            <th>Total Amount</th>
+        </tr>
+    {% for symbol, name, ac, er, price, ns, ta in portfolio.list %}
+        <tr>
+            <td>{{ symbol }}</td>
+            <td>{{ name }}</td>
+            <td>{{ ac }}</td>
+            <td>{{ er }}</td>
+            <td>{{ price }}</td>
+            <td>{{ ns }}</td>
+            <td>{{ ta }}</td>
+            
+        </tr>
+    {% endfor %}
+    <tr>
+        <td colspan="6"><b>Total</b></td>
+        <td><b>{{ portfolio.total_spent }}</b></td>
+    </tr>
+    </table>
+    <br/>
+    <h1>Annual Portfolio Summary Statistics</h1>
+    <table>
+        <tr>
+            <th>Divident Yeild</th>
+            <th>Divident Amount</th>
+            <th>Expense Ratio</th>
+            <th>Expense Amount</th>
+        </tr>
+        <tr>
+            <td>{{ portfolio.divident_yeild }}</td>
+            <td>{{ portfolio.divident_amount }}</td>
+            <td>{{ portfolio.expense_ratio_annual_per }}</td>
+            <td>{{ portfolio.expense_ratio_annual_amount }}</td>
+        </tr>
+    </table>
+    <br/>
+    <h1>Previous Returns On this Portfolio</h1>
+    <table>
+        <tr>
+            <th>One Week Return</th>
+            <th>One Month Return</th>
+            <th>One Year Return</th>
+            <th>Five Year Return</th>
+        </tr>
+        <tr>
+            <td>{{ portfolio.one_week_return }}</td>
+            <td>{{ portfolio.one_month_return }}</td>
+            <td>{{ portfolio.one_year_return }}</td>
+            <td>{{ portfolio.five_year_return }}</td>
+        </tr>
+    </table>
+    <br/>
+    <img src="data:image/png;base64,{{ portfolio.image_uri }}" alt="Pie Chart">
+</div>
+</body>
+</html>

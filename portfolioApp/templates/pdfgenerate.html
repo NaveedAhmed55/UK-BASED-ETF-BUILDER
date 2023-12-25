@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML to PDF Example</title>
+    <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script> -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        h1{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <button id="generate-pdf">Generate PDF</button>
+    
+    <script>
+        document.getElementById('generate-pdf').addEventListener('click', function() {
+            generatePDF();
+        });
+
+        function generatePDF() {
+            const element = document.body; // Entire body content
+            const opt = {
+                margin: 10,
+                filename: 'converted.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Start the PDF generation
+            html2pdf().from(element).set(opt).save();
+        }
+    </script>
+    <div id="content">
+        <h1>Hello World</h1>
+    </div>
+</body>
+</html>
